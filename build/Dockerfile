@@ -24,7 +24,7 @@ ENV STEAM_USER="steam" \
 	STEAM_HOME="/opt/steam"
 
 # Add steam user.
-RUN adduser --disabled-login --gecos "Steam" --home $STEAM_HOME $STEAM_USER
+RUN adduser --system --disabled-login --gecos "Steam" --home $STEAM_HOME $STEAM_USER
 
 # Install SteamCMD.
 RUN curl -fsSL "https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.gz" | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
