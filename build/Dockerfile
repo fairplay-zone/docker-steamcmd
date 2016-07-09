@@ -35,9 +35,5 @@ RUN curl -fsSL "https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.
 # Copy common scripts.
 COPY /script/* /usr/local/bin/
 
-# Copy entrypoint script.
-COPY /docker-entrypoint.sh /entrypoint.sh
-
-# Set entrypoint and default command.
-ENTRYPOINT ["/entrypoint.sh"]
+# Set default command.
 CMD ["steamcmd"]
