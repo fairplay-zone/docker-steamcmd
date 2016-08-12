@@ -2,11 +2,14 @@ FROM debian:jessie
 MAINTAINER DST Academy <support@dst.academy>
 
 # Set build arguments.
-ARG GOSU_VERSION=1.9
-
-# Define environment variables.
-ENV STEAM_USER="steam" \
-	STEAM_HOME="/opt/steam"
+ARG GOSU_VERSION
+ENV GOSU_VERSION ${GOSU_VERSION:-1.9}
+ARG STEAM_USER
+ENV STEAM_USER ${STEAM_USER:-"steam"}
+ARG STEAM_HOME
+ENV STEAM_HOME ${STEAM_HOME:-"/opt/steam"}
+ARG STEAM_URL
+ENV STEAM_URL ${STEAM_URL:-"https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.gz"}
 
 # Add our user/group first to ensure their IDs get set consistently.
 RUN groupadd -r $STEAM_USER && useradd -rm -d $STEAM_HOME -g $STEAM_USER $STEAM_USER
@@ -29,7 +32,7 @@ RUN set -x \
 	&& gosu nobody true \
 
 	# Install SteamCMD.
-	&& wget -qO- "https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.gz" | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
+	&& wget -qO- $STEAM_URL | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
 	&& gosu $STEAM_USER $STEAM_HOME/steamcmd.sh \
 		+@ShutdownOnFailedCommand 1 \
 		+quit \
