@@ -1,40 +1,58 @@
 FROM debian:jessie
 MAINTAINER DST Academy <support@dst.academy>
 
-# Install dependencies.
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		ca-certificates \
-		curl \
-		lib32gcc1 \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+# Set build arguments.
+ARG GOSU_VERSION
+ENV GOSU_VERSION ${GOSU_VERSION:-1.9}
+ARG STEAM_USER
+ENV STEAM_USER ${STEAM_USER:-"steam"}
+ARG STEAM_HOME
+ENV STEAM_HOME ${STEAM_HOME:-"/opt/steam"}
+ARG STEAM_URL
+ENV STEAM_URL ${STEAM_URL:-"https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.gz"}
 
-# Install gosu.
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& curl -o /usr/local/bin/gosu -fsSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-$(dpkg --print-architecture)" \
-	&& curl -o /usr/local/bin/gosu.asc -fsSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
+# Add our user/group first to ensure their IDs get set consistently.
+RUN groupadd -r $STEAM_USER && useradd -rm -d $STEAM_HOME -g $STEAM_USER $STEAM_USER
 
-# Define environment variables.
-ENV STEAM_USER="steam" \
-	STEAM_HOME="/opt/steam"
+# Install everything.
+RUN set -x \
 
-# Add steam user.
-RUN adduser --disabled-login --gecos "Steam" --home $STEAM_HOME $STEAM_USER
+	# Install dependencies.
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends wget ca-certificates lib32gcc1 \
 
-# Install SteamCMD.
-RUN curl -fsSL "https://cdn.steamstatic.com/client/installer/steamcmd_linux.tar.gz" | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
+	# Install gosu.
+	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+	&& export GNUPGHOME="$(mktemp -d)" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+	&& chmod +x /usr/local/bin/gosu \
+	&& gosu nobody true \
+
+	# Install SteamCMD.
+	&& wget -qO- $STEAM_URL | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
 	&& gosu $STEAM_USER $STEAM_HOME/steamcmd.sh \
 		+@ShutdownOnFailedCommand 1 \
 		+quit \
 	&& rm -rf $STEAM_HOME/Steam/logs $STEAM_HOME/Steam/appcache/httpcache \
-	&& find $STEAM_HOME/package -type f ! -name "steam_cmd_linux.installed" ! -name "steam_cmd_linux.manifest" -delete
+	&& find $STEAM_HOME/package -type f ! -name "steam_cmd_linux.installed" ! -name "steam_cmd_linux.manifest" -delete \
+
+	# Clean up.
+	&& apt-get purge -y --auto-remove wget \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy common scripts.
 COPY /script/* /usr/local/bin/
 
-# Set default command.
+# Copy entrypoint script.
+COPY /docker-entrypoint.sh /
+
+# Set user.
+USER $STEAM_USER
+
+# Set entrypoint and default command.
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["steamcmd"]
