@@ -42,7 +42,7 @@ RUN set -x \
 	# Clean up.
 	&& apt-get purge -y --auto-remove wget \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	&& rm -rf /var/lib/apt/lists/*
 
 # Copy common scripts.
 COPY /script/* /usr/local/bin/
