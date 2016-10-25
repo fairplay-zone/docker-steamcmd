@@ -2,6 +2,13 @@
 
 ## [next]
 
+### Added
+- Introduce `ARG` options in the Dockerfile.
+- Introduce a `USER` option in the Dockerfile.
+
+### Changed
+- Update to gosu 1.10.
+
 ## [0.1.0]
 
 ### Added
