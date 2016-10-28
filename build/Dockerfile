@@ -50,9 +50,6 @@ COPY /script/* /usr/local/bin/
 # Copy entrypoint script.
 COPY /docker-entrypoint.sh /
 
-# Set user.
-USER $STEAM_USER
-
 # Set entrypoint and default command.
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["steamcmd"]
