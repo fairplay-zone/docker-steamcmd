@@ -2,6 +2,9 @@
 
 ## [next]
 
+### Changed
+- Remove the `USER` command and run `steamcmd` via `gosu`.
+
 ## [0.2.0]
 
 ### Added
