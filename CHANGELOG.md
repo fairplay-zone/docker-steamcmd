@@ -2,6 +2,11 @@
 
 ## [next]
 
+## [0.2.2]
+
+### Fixed
+- Set correct permissions for the `docker-entrypoint.sh` file.
+
 ## [0.2.1]
 
 ### Changed
@@ -21,7 +26,8 @@
 ### Added
 - Initial release.
 
-[next]: https://github.com/dst-academy/docker-steamcmd/compare/v0.2.1...HEAD
+[next]: https://github.com/dst-academy/docker-steamcmd/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/dst-academy/docker-steamcmd/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/dst-academy/docker-steamcmd/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/dst-academy/docker-steamcmd/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/dst-academy/docker-steamcmd/compare/55cdeb0752d6c6305e667d79f3abba50c459c15e...v0.1.0
