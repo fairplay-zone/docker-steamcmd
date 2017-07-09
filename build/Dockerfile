@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:9.0
 MAINTAINER DST Academy <support@dst.academy>
 
 # Set build arguments.
@@ -19,7 +19,7 @@ RUN set -x \
 
 	# Install dependencies.
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends wget ca-certificates lib32gcc1 \
+	&& apt-get install -y --no-install-recommends wget ca-certificates gnupg2 dirmngr lib32gcc1 \
 
 	# Install gosu.
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
@@ -40,7 +40,7 @@ RUN set -x \
 	&& find $STEAM_HOME/package -type f ! -name "steam_cmd_linux.installed" ! -name "steam_cmd_linux.manifest" -delete \
 
 	# Clean up.
-	&& apt-get purge -y --auto-remove wget \
+	&& apt-get purge -y --auto-remove wget gnupg2 dirmngr \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
