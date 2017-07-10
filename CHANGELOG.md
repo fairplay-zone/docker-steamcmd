@@ -2,6 +2,9 @@
 
 ## [next]
 
+### Changed
+- Update base-image to Debian 9.
+
 ## [0.2.2]
 
 ### Fixed
