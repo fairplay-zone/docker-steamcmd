@@ -1,4 +1,4 @@
-FROM debian:9.0
+FROM debian:9
 MAINTAINER DST Academy <support@dst.academy>
 
 # Set build arguments.
