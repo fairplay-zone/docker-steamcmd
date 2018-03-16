@@ -1,4 +1,4 @@
-FROM bitnami/minideb:stretch
+FROM debian:9-slim
 MAINTAINER DST Academy <support@dst.academy>
 
 # Set build arguments.
