@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:9-slim
 MAINTAINER DST Academy <support@dst.academy>
 
 # Set build arguments.
@@ -16,11 +16,9 @@ RUN groupadd -r $STEAM_USER && useradd -rm -d $STEAM_HOME -g $STEAM_USER $STEAM_
 
 # Install everything.
 RUN set -x \
-
 	# Install dependencies.
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends wget ca-certificates gnupg2 dirmngr lib32gcc1 \
-
 	# Install gosu.
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -30,7 +28,6 @@ RUN set -x \
 	&& rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc \
 	&& chmod +x /usr/local/bin/gosu \
 	&& gosu nobody true \
-
 	# Install SteamCMD.
 	&& wget -qO- $STEAM_URL | gosu $STEAM_USER tar -xzvC $STEAM_HOME \
 	&& gosu $STEAM_USER $STEAM_HOME/steamcmd.sh \
@@ -38,7 +35,6 @@ RUN set -x \
 		+quit \
 	&& rm -rf $STEAM_HOME/Steam/logs $STEAM_HOME/Steam/appcache/httpcache \
 	&& find $STEAM_HOME/package -type f ! -name "steam_cmd_linux.installed" ! -name "steam_cmd_linux.manifest" -delete \
-
 	# Clean up.
 	&& apt-get purge -y --auto-remove wget gnupg2 dirmngr \
 	&& apt-get clean \
