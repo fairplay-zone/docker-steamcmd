@@ -2,6 +2,12 @@
 
 ## [next]
 
+### Added
+- Add tests.
+
+### Changed
+- Update base-image to Debian 9 slim.
+
 ## [0.3.0]
 
 ### Changed
