@@ -2,6 +2,9 @@
 
 ## [next]
 
+### Changed
+- Use `dstacademy/gosu` as base-image.
+
 ## [0.4.0]
 
 ### Added
